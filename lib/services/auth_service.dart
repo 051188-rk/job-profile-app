@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService with ChangeNotifier {
   String? _userType;
@@ -18,12 +18,12 @@ class AuthService with ChangeNotifier {
     _email = email;
     _userType = userType;
     _isLoggedIn = true;
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', email);
     await prefs.setString('userType', userType);
     await prefs.setBool('isLoggedIn', true);
-    
+
     notifyListeners();
   }
 
@@ -33,12 +33,12 @@ class AuthService with ChangeNotifier {
     _email = email;
     _userType = userType;
     _isLoggedIn = true;
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', email);
     await prefs.setString('userType', userType);
     await prefs.setBool('isLoggedIn', true);
-    
+
     notifyListeners();
   }
 
@@ -46,12 +46,12 @@ class AuthService with ChangeNotifier {
     _email = null;
     _userType = null;
     _isLoggedIn = false;
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('email');
     await prefs.remove('userType');
     await prefs.remove('isLoggedIn');
-    
+
     notifyListeners();
   }
 
@@ -62,4 +62,4 @@ class AuthService with ChangeNotifier {
     _userType = prefs.getString('userType');
     notifyListeners();
   }
-} 
+}

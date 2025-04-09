@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../auth/auth_screen.dart';
 
 class LandingScreen extends StatelessWidget {
@@ -23,21 +22,22 @@ class LandingScreen extends StatelessWidget {
                   color: Color(0xFF1D9DB4),
                 ),
                 textAlign: TextAlign.center,
-              ).animate().fadeIn().slideY(),
+              ),
               const SizedBox(height: 16),
               const Text(
-                'Discover thousands of job opportunities with all the information you need. Its your future, come find it.',
+                'Discover thousands of job opportunities with all the information you need. It\'s your future, come find it.',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey,
                 ),
                 textAlign: TextAlign.center,
-              ).animate().fadeIn().slideY(delay: 200.ms),
+              ),
               const SizedBox(height: 50),
               Image.asset(
                 'assets/images/landing_image.png',
                 height: 250,
-              ).animate().fadeIn().slideY(delay: 400.ms),
+                fit: BoxFit.contain,
+              ),
               const Spacer(),
               ElevatedButton(
                 onPressed: () {
@@ -52,13 +52,15 @@ class LandingScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: 4,
+                  backgroundColor: const Color(0xFF1D9DB4),
+                  foregroundColor: Colors.white,
                   shadowColor: const Color(0xFF1D9DB4).withOpacity(0.3),
                 ),
                 child: const Text(
                   'Get Started',
                   style: TextStyle(fontSize: 18),
                 ),
-              ).animate().fadeIn().slideY(delay: 600.ms),
+              ),
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
@@ -74,11 +76,11 @@ class LandingScreen extends StatelessWidget {
                     fontSize: 16,
                   ),
                 ),
-              ).animate().fadeIn().slideY(delay: 800.ms),
+              ),
             ],
           ),
         ),
       ),
     );
   }
-} 
+}

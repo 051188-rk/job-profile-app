@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/home/home_screen.dart';
@@ -16,7 +15,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthService()),
+        ChangeNotifierProvider(
+            create: (_) => AuthService()..checkLoginStatus()),
       ],
       child: MaterialApp(
         title: 'Job Application Platform',
@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
             primary: const Color(0xFF1D9DB4),
             secondary: const Color(0xFF1D9DB4).withOpacity(0.8),
           ),
-          textTheme: GoogleFonts.interTextTheme(),
           scaffoldBackgroundColor: Colors.white,
           appBarTheme: const AppBarTheme(
             backgroundColor: Colors.white,
@@ -64,23 +63,7 @@ class AuthWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
-    
-    return StreamBuilder(
-      stream: authService.authStateChanges,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.active) {
-          final user = snapshot.data;
-          if (user == null) {
-            return const AuthScreen();
-          }
-          return const HomeScreen();
-        }
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      },
-    );
+
+    return authService.isLoggedIn ? const HomeScreen() : const AuthScreen();
   }
-} 
+}

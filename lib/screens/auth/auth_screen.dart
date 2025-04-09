@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../services/auth_service.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -15,13 +14,13 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLogin = true;
   String _email = '';
   String _password = '';
-  String _userType = 'job_seeker'; // Default to job seeker
+  String _userType = 'job_seeker';
 
   void _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       final authService = Provider.of<AuthService>(context, listen: false);
-      
+
       try {
         if (_isLogin) {
           await authService.signIn(_email, _password, _userType);
@@ -30,7 +29,7 @@ class _AuthScreenState extends State<AuthScreen> {
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
+          SnackBar(content: Text('Error: ${e.toString()}')),
         );
       }
     }
@@ -55,7 +54,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF1D9DB4),
                   ),
-                ).animate().fadeIn().slideY(),
+                ),
                 const SizedBox(height: 8),
                 Text(
                   _isLogin
@@ -65,16 +64,17 @@ class _AuthScreenState extends State<AuthScreen> {
                     fontSize: 16,
                     color: Colors.grey.shade600,
                   ),
-                ).animate().fadeIn().slideY(delay: 200.ms),
+                ),
                 const SizedBox(height: 40),
-                if (!_isLogin) ...[
+
+                if (!_isLogin)
                   Row(
                     children: [
                       Expanded(
                         child: ChoiceChip(
                           label: const Text('Job Seeker'),
                           selected: _userType == 'job_seeker',
-                          onSelected: (selected) {
+                          onSelected: (_) {
                             setState(() {
                               _userType = 'job_seeker';
                             });
@@ -93,7 +93,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         child: ChoiceChip(
                           label: const Text('Recruiter'),
                           selected: _userType == 'recruiter',
-                          onSelected: (selected) {
+                          onSelected: (_) {
                             setState(() {
                               _userType = 'recruiter';
                             });
@@ -108,9 +108,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                       ),
                     ],
-                  ).animate().fadeIn().slideY(delay: 400.ms),
-                  const SizedBox(height: 24),
-                ],
+                  ),
+                if (!_isLogin) const SizedBox(height: 24),
+
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Email',
@@ -120,15 +120,15 @@ class _AuthScreenState extends State<AuthScreen> {
                     prefixIcon: const Icon(Icons.email_outlined),
                   ),
                   keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    return null;
-                  },
+                  validator: (value) =>
+                      (value == null || value.isEmpty)
+                          ? 'Please enter your email'
+                          : null,
                   onSaved: (value) => _email = value!,
-                ).animate().fadeIn().slideY(delay: 600.ms),
+                ),
+
                 const SizedBox(height: 16),
+
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -148,8 +148,10 @@ class _AuthScreenState extends State<AuthScreen> {
                     return null;
                   },
                   onSaved: (value) => _password = value!,
-                ).animate().fadeIn().slideY(delay: 800.ms),
+                ),
+
                 const SizedBox(height: 24),
+
                 ElevatedButton(
                   onPressed: _submit,
                   style: ElevatedButton.styleFrom(
@@ -159,8 +161,10 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                   ),
                   child: Text(_isLogin ? 'Sign In' : 'Sign Up'),
-                ).animate().fadeIn().slideY(delay: 1000.ms),
+                ),
+
                 const SizedBox(height: 16),
+
                 TextButton(
                   onPressed: () {
                     setState(() {
@@ -175,7 +179,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       color: Color(0xFF1D9DB4),
                     ),
                   ),
-                ).animate().fadeIn().slideY(delay: 1200.ms),
+                ),
               ],
             ),
           ),
@@ -183,4 +187,4 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
     );
   }
-} 
+}

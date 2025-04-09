@@ -86,7 +86,7 @@ class CoursesScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.star, color: Colors.amber),
+                      const Icon(Icons.star, color: Colors.amber),
                       const SizedBox(width: 4),
                       Text(course['rating'].toString()),
                     ],
