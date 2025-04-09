@@ -1,38 +1,65 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences.dart';
 
 class AuthService with ChangeNotifier {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  String? _userType;
+  String? _email;
+  bool _isLoggedIn = false;
 
-  User? get currentUser => _auth.currentUser;
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
+  String? get userType => _userType;
+  String? get email => _email;
+  bool get isLoggedIn => _isLoggedIn;
 
-  Future<UserCredential?> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null;
+  Stream<bool> get authStateChanges => Stream.value(_isLoggedIn);
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+  Future<void> signIn(String email, String password, String userType) async {
+    // In a real app, you would validate credentials against a backend
+    // For now, we'll just simulate a successful login
+    _email = email;
+    _userType = userType;
+    _isLoggedIn = true;
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+    await prefs.setString('userType', userType);
+    await prefs.setBool('isLoggedIn', true);
+    
+    notifyListeners();
+  }
 
-      return await _auth.signInWithCredential(credential);
-    } catch (e) {
-      debugPrint('Error signing in with Google: $e');
-      return null;
-    }
+  Future<void> signUp(String email, String password, String userType) async {
+    // In a real app, you would create a new user in your backend
+    // For now, we'll just simulate a successful signup
+    _email = email;
+    _userType = userType;
+    _isLoggedIn = true;
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+    await prefs.setString('userType', userType);
+    await prefs.setBool('isLoggedIn', true);
+    
+    notifyListeners();
   }
 
   Future<void> signOut() async {
-    try {
-      await _googleSignIn.signOut();
-      await _auth.signOut();
-    } catch (e) {
-      debugPrint('Error signing out: $e');
-    }
+    _email = null;
+    _userType = null;
+    _isLoggedIn = false;
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('email');
+    await prefs.remove('userType');
+    await prefs.remove('isLoggedIn');
+    
+    notifyListeners();
+  }
+
+  Future<void> checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    _isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    _email = prefs.getString('email');
+    _userType = prefs.getString('userType');
+    notifyListeners();
   }
 } 

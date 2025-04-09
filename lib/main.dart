@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'services/auth_service.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+void main() {
   runApp(const MyApp());
 }
 
@@ -23,16 +21,33 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Job Application Platform',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primaryColor: const Color(0xFF1D9DB4),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF1D9DB4),
+            primary: const Color(0xFF1D9DB4),
+            secondary: const Color(0xFF1D9DB4).withOpacity(0.8),
+          ),
+          textTheme: GoogleFonts.interTextTheme(),
           scaffoldBackgroundColor: Colors.white,
           appBarTheme: const AppBarTheme(
             backgroundColor: Colors.white,
             elevation: 0,
-            iconTheme: IconThemeData(color: Colors.black),
+            iconTheme: IconThemeData(color: Color(0xFF1D9DB4)),
             titleTextStyle: TextStyle(
-              color: Colors.black,
+              color: Color(0xFF1D9DB4),
               fontSize: 20,
               fontWeight: FontWeight.bold,
+            ),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1D9DB4),
+              foregroundColor: Colors.white,
+              elevation: 4,
+              shadowColor: const Color(0xFF1D9DB4).withOpacity(0.3),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),

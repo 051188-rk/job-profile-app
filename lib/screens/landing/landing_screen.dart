@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../services/auth_service.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../auth/auth_screen.dart';
 
 class LandingScreen extends StatelessWidget {
@@ -21,9 +20,10 @@ class LandingScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
+                  color: Color(0xFF1D9DB4),
                 ),
                 textAlign: TextAlign.center,
-              ),
+              ).animate().fadeIn().slideY(),
               const SizedBox(height: 16),
               const Text(
                 'Discover thousands of job opportunities with all the information you need. Its your future, come find it.',
@@ -32,12 +32,12 @@ class LandingScreen extends StatelessWidget {
                   color: Colors.grey,
                 ),
                 textAlign: TextAlign.center,
-              ),
+              ).animate().fadeIn().slideY(delay: 200.ms),
               const SizedBox(height: 50),
               Image.asset(
                 'assets/images/landing_image.png',
                 height: 250,
-              ),
+              ).animate().fadeIn().slideY(delay: 400.ms),
               const Spacer(),
               ElevatedButton(
                 onPressed: () {
@@ -51,23 +51,30 @@ class LandingScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+                  elevation: 4,
+                  shadowColor: const Color(0xFF1D9DB4).withOpacity(0.3),
                 ),
                 child: const Text(
                   'Get Started',
                   style: TextStyle(fontSize: 18),
                 ),
-              ),
+              ).animate().fadeIn().slideY(delay: 600.ms),
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
-                  final authService = Provider.of<AuthService>(context, listen: false);
-                  authService.signInWithGoogle();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AuthScreen()),
+                  );
                 },
                 child: const Text(
-                  'Continue with Google',
-                  style: TextStyle(fontSize: 16),
+                  'Already have an account? Sign In',
+                  style: TextStyle(
+                    color: Color(0xFF1D9DB4),
+                    fontSize: 16,
+                  ),
                 ),
-              ),
+              ).animate().fadeIn().slideY(delay: 800.ms),
             ],
           ),
         ),

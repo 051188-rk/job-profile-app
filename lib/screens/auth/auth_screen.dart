@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../services/auth_service.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -14,6 +15,7 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLogin = true;
   String _email = '';
   String _password = '';
+  String _userType = 'job_seeker'; // Default to job seeker
 
   void _submit() async {
     if (_formKey.currentState!.validate()) {
@@ -22,9 +24,9 @@ class _AuthScreenState extends State<AuthScreen> {
       
       try {
         if (_isLogin) {
-          await authService.signInWithEmailAndPassword(_email, _password);
+          await authService.signIn(_email, _password, _userType);
         } else {
-          await authService.createUserWithEmailAndPassword(_email, _password);
+          await authService.signUp(_email, _password, _userType);
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -37,84 +39,145 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_isLogin ? 'Login' : 'Sign Up'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-                onSaved: (value) => _email = value!,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  if (value.length < 6) {
-                    return 'Password must be at least 6 characters';
-                  }
-                  return null;
-                },
-                onSaved: (value) => _password = value!,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _submit,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  minimumSize: const Size(double.infinity, 0),
-                ),
-                child: Text(_isLogin ? 'Login' : 'Sign Up'),
-              ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    _isLogin = !_isLogin;
-                  });
-                },
-                child: Text(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 40),
+                Text(
+                  _isLogin ? 'Welcome Back!' : 'Create Account',
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1D9DB4),
+                  ),
+                ).animate().fadeIn().slideY(),
+                const SizedBox(height: 8),
+                Text(
                   _isLogin
-                      ? 'Don\'t have an account? Sign Up'
-                      : 'Already have an account? Login',
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () {
-                  final authService = Provider.of<AuthService>(context, listen: false);
-                  authService.signInWithGoogle();
-                },
-                icon: const Icon(Icons.g_mobiledata),
-                label: const Text('Continue with Google'),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  minimumSize: const Size(double.infinity, 0),
-                ),
-              ),
-            ],
+                      ? 'Sign in to continue'
+                      : 'Join us to find your dream job',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey.shade600,
+                  ),
+                ).animate().fadeIn().slideY(delay: 200.ms),
+                const SizedBox(height: 40),
+                if (!_isLogin) ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ChoiceChip(
+                          label: const Text('Job Seeker'),
+                          selected: _userType == 'job_seeker',
+                          onSelected: (selected) {
+                            setState(() {
+                              _userType = 'job_seeker';
+                            });
+                          },
+                          selectedColor: const Color(0xFF1D9DB4),
+                          backgroundColor: Colors.grey.shade200,
+                          labelStyle: TextStyle(
+                            color: _userType == 'job_seeker'
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ChoiceChip(
+                          label: const Text('Recruiter'),
+                          selected: _userType == 'recruiter',
+                          onSelected: (selected) {
+                            setState(() {
+                              _userType = 'recruiter';
+                            });
+                          },
+                          selectedColor: const Color(0xFF1D9DB4),
+                          backgroundColor: Colors.grey.shade200,
+                          labelStyle: TextStyle(
+                            color: _userType == 'recruiter'
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ).animate().fadeIn().slideY(delay: 400.ms),
+                  const SizedBox(height: 24),
+                ],
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: const Icon(Icons.email_outlined),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) => _email = value!,
+                ).animate().fadeIn().slideY(delay: 600.ms),
+                const SizedBox(height: 16),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    prefixIcon: const Icon(Icons.lock_outline),
+                  ),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your password';
+                    }
+                    if (value.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) => _password = value!,
+                ).animate().fadeIn().slideY(delay: 800.ms),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _submit,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(_isLogin ? 'Sign In' : 'Sign Up'),
+                ).animate().fadeIn().slideY(delay: 1000.ms),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _isLogin = !_isLogin;
+                    });
+                  },
+                  child: Text(
+                    _isLogin
+                        ? 'Don\'t have an account? Sign Up'
+                        : 'Already have an account? Sign In',
+                    style: const TextStyle(
+                      color: Color(0xFF1D9DB4),
+                    ),
+                  ),
+                ).animate().fadeIn().slideY(delay: 1200.ms),
+              ],
+            ),
           ),
         ),
       ),
